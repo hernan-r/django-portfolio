@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block body_class %}page-contact{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="page-hero-glow" aria-hidden="true"></div>
+  <div class="container">
+    <p class="section-kicker reveal">Contacto</p>
+    <h1 class="page-title reveal">¿Tenés una oportunidad<br><span class="text-gradient">o una idea?</span></h1>
+    <p class="page-lead reveal">
+      Escribime y coordinamos una charla. Respondo consultas de reclutadores, propuestas freelance y colaboraciones en proyectos.
+    </p>
+  </div>
+</section>
+
+<section class="section section-tight">
+  <div class="container contact-grid">
+    <aside class="contact-aside reveal">
+      <p class="section-kicker">Canales directos</p>
+      <h2 class="section-title">Hablemos de tu proyecto</h2>
+      <p class="contact-intro">
+        Contame brevemente qué necesitás y te respondo a la brevedad. Si preferís, también podés escribirme directo a mi email.
+      </p>
+
+      <ul class="contact-list">
+        {% if profile.email %}
+          <li>
+            <span class="contact-icon"><svg class="icon" aria-hidden="true"><use href="#icon-mail"></use></svg></span>
+            <div>
+              <span class="contact-label">Email</span>
+              <a href="mailto:{{ profile.email }}">{{ profile.email }}</a>
+            </div>
+          </li>
+        {% endif %}
+        {% if profile.phone %}
+          <li>
+            <span class="contact-icon"><svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg></span>
+            <div>
+              <span class="contact-label">Teléfono</span>
+              <a href="tel:{{ profile.phone }}">{{ profile.phone }}</a>
+            </div>
+          </li>
+        {% endif %}
+        {% if profile.location %}
+          <li>
+            <span class="contact-icon"><svg class="icon" aria-hidden="true"><use href="#icon-map-pin"></use></svg></span>
+            <div>
+              <span class="contact-label">Ubicación</span>
+              <span>{{ profile.location }}</span>
+            </div>
+          </li>
+        {% endif %}
+        <li>
+          <span class="contact-icon"><svg class="icon" aria-hidden="true"><use href="#icon-briefcase"></use></svg></span>
+          <div>
+            <span class="contact-label">Disponibilidad</span>
+            <span>{{ profile.availability|default:"Abierto a nuevas oportunidades" }}</span>
+          </div>
+        </li>
+      </ul>
+
+      <div class="contact-social">
+        <span class="contact-label">Redes</span>
+        {% include "partials/social_links.html" %}
+      </div>
+
+      <div class="contact-cv">
+        <div>
+          <strong>¿Necesitás mi CV?</strong>
+          <p>Descargalo en PDF, actualizado con mi experiencia y proyectos.</p>
+        </div>
+        <a class="button button-ghost button-sm" href="{% url 'cv_download' %}">
+          <svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+          Descargar
+        </a>
+      </div>
+    </aside>
+
+    <div class="contact-form-card reveal" id="formulario">
+      <div class="form-head">
+        <h2>Enviame un mensaje</h2>
+        <p>Los campos marcados con <span aria-hidden="true">*</span> son obligatorios.</p>
+      </div>
+
+      <form method="post" action="{% url 'contact' %}" class="contact-form" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="form-alert" role="alert">
+            {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="{{ form.name.id_for_label }}">{{ form.name.label }} <span aria-hidden="true">*</span></label>
+            {{ form.name }}
+            {% for error in form.name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          </div>
+
+          <div class="form-field">
+            <label for="{{ form.email.id_for_label }}">{{ form.email.label }} <span aria-hidden="true">*</span></label>
+            {{ form.email }}
+            {% for error in form.email.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          </div>
+
+          <div class="form-field">
+            <label for="{{ form.company.id_for_label }}">{{ form.company.label }}</label>
+            {{ form.company }}
+            {% for error in form.company.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          </div>
+
+          <div class="form-field">
+            <label for="{{ form.subject.id_for_label }}">{{ form.subject.label }}</label>
+            {{ form.subject }}
+            {% for error in form.subject.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          </div>
+
+          <div class="form-field form-field-full">
+            <label for="{{ form.message.id_for_label }}">{{ form.message.label }} <span aria-hidden="true">*</span></label>
+            {{ form.message }}
+            {% for error in form.message.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          </div>
+        </div>
+
+        <div class="hp-field-wrapper" aria-hidden="true">
+          <label for="{{ form.website.id_for_label }}">No completar este campo</label>
+          {{ form.website }}
+        </div>
+
+        <div class="form-footer">
+          <p class="form-note">
+            <svg class="icon" aria-hidden="true"><use href="#icon-shield"></use></svg>
+            Tus datos se usan solo para responder tu mensaje.
+          </p>
+          <button class="button button-primary" type="submit">
+            Enviar mensaje
+            <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

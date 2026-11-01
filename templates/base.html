@@ -1,0 +1,154 @@
+{% load static %}
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% if meta_title %}{{ meta_title }} · {% endif %}{{ profile.full_name|default:"Portfolio" }}{% endblock %}</title>
+  <meta name="description" content="{{ meta_description|default:'' }}">
+  <meta name="author" content="{{ profile.full_name|default:'Backend Developer' }}">
+  <meta name="theme-color" content="#070b14">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ profile.full_name|default:'Portfolio' }}">
+  <meta property="og:title" content="{% block og_title %}{{ meta_title|default:'Portfolio' }} · {{ profile.full_name|default:'Backend Developer' }}{% endblock %}">
+  <meta property="og:description" content="{{ meta_description|default:'' }}">
+  {% if og_image %}<meta property="og:image" content="{{ og_image }}">{% endif %}
+
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <noscript>
+    <style>
+      .nav-toggle, .theme-toggle { display: none !important; }
+      @media (max-width: 980px) {
+        .site-header .nav { flex-wrap: wrap; }
+        .nav-panel { position: static !important; display: flex !important; flex-direction: column; align-items: stretch; margin: 0; padding: 0 0 1rem; background: transparent; border: 0; box-shadow: none; }
+        .nav-links { flex-direction: column; align-items: stretch; }
+      }
+    </style>
+  </noscript>
+  <script>
+    (function () {
+      document.documentElement.classList.add('js');
+      try {
+        var stored = localStorage.getItem('portfolio-theme');
+        if (stored === 'light' || stored === 'dark') {
+          document.documentElement.setAttribute('data-theme', stored);
+        }
+      } catch (error) {}
+    })();
+  </script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  {% include "partials/icons.html" %}
+
+  <header class="site-header" id="site-header">
+    <nav class="nav container" aria-label="Navegación principal">
+      <a class="brand" href="{% url 'home' %}" aria-label="Ir al inicio">
+        <span class="brand-mark" aria-hidden="true">{{ profile.initials|default:"DEV" }}</span>
+        <span class="brand-text">
+          <strong>{{ profile.full_name|default:"Portfolio" }}</strong>
+          <small>Desarrollador Backend</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label="Abrir menú">
+        <svg class="icon icon-menu" aria-hidden="true"><use href="#icon-menu"></use></svg>
+        <svg class="icon icon-close" aria-hidden="true"><use href="#icon-close"></use></svg>
+      </button>
+
+      <div class="nav-panel" id="nav-panel">
+        <ul class="nav-links">
+          <li><a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}class="is-active" aria-current="page"{% endif %}>Inicio</a></li>
+          <li><a href="{% url 'about' %}" {% if request.resolver_match.url_name == 'about' %}class="is-active" aria-current="page"{% endif %}>Sobre mí</a></li>
+          <li><a href="{% url 'skills' %}" {% if request.resolver_match.url_name == 'skills' %}class="is-active" aria-current="page"{% endif %}>Skills</a></li>
+          <li><a href="{% url 'projects' %}" {% if request.resolver_match.url_name == 'projects' or request.resolver_match.url_name == 'project_detail' %}class="is-active" aria-current="page"{% endif %}>Proyectos</a></li>
+          <li><a href="{% url 'experience' %}" {% if request.resolver_match.url_name == 'experience' %}class="is-active" aria-current="page"{% endif %}>Experiencia</a></li>
+          <li><a href="{% url 'contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="is-active" aria-current="page"{% endif %}>Contacto</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button class="icon-button theme-toggle" type="button" id="theme-toggle" aria-label="Cambiar entre tema claro y oscuro" title="Cambiar tema">
+            <svg class="icon icon-sun" aria-hidden="true"><use href="#icon-sun"></use></svg>
+            <svg class="icon icon-moon" aria-hidden="true"><use href="#icon-moon"></use></svg>
+          </button>
+          <a class="button button-primary button-sm" href="{% url 'cv_download' %}">
+            <svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+            Descargar CV
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="contenido">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="{% url 'home' %}">
+          <span class="brand-mark" aria-hidden="true">{{ profile.initials|default:"DEV" }}</span>
+          <span class="brand-text"><strong>{{ profile.full_name|default:"Portfolio" }}</strong><small>{{ profile.headline|default:"Backend Developer" }}</small></span>
+        </a>
+        <p>{{ profile.tagline|default:"Desarrollador Backend y estudiante de Ingeniería en Sistemas de Información (UTN)." }}</p>
+        {% include "partials/social_links.html" %}
+      </div>
+
+      <div class="footer-column">
+        <h2 class="footer-heading">Navegación</h2>
+        <ul class="footer-links">
+          <li><a href="{% url 'home' %}">Inicio</a></li>
+          <li><a href="{% url 'about' %}">Sobre mí</a></li>
+          <li><a href="{% url 'projects' %}">Proyectos</a></li>
+          <li><a href="{% url 'experience' %}">Experiencia</a></li>
+          <li><a href="{% url 'contact' %}">Contacto</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h2 class="footer-heading">Contacto</h2>
+        <ul class="footer-links">
+          {% if profile.email %}<li><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></li>{% endif %}
+          {% if profile.location %}<li class="footer-muted">{{ profile.location }}</li>{% endif %}
+          {% if profile.availability %}<li><span class="status-dot" aria-hidden="true"></span>{{ profile.availability }}</li>{% endif %}
+          <li><a href="{% url 'cv_download' %}">Descargar CV en PDF</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>© {% now "Y" %} {{ profile.full_name|default:"Portfolio" }}. Todos los derechos reservados.</p>
+      <p class="footer-built">Construido con <span>Django</span> · <a href="{% url 'admin:index' %}">Administrar</a></p>
+    </div>
+  </footer>
+
+  {% if messages %}
+    <div class="toast-stack" aria-live="polite" aria-atomic="true">
+      {% for message in messages %}
+        <div class="toast toast-{{ message.tags }}" role="status">
+          <span class="toast-icon" aria-hidden="true">
+            <svg class="icon"><use href="#icon-check"></use></svg>
+          </span>
+          <p>{{ message }}</p>
+          <button type="button" class="toast-close" aria-label="Cerrar notificación">
+            <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <button class="back-to-top" id="back-to-top" type="button" aria-label="Volver arriba">
+    <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up"></use></svg>
+  </button>
+
+  <script src="{% static 'js/main.js' %}" defer></script>
+</body>
+</html>

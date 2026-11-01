@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}page-home{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-grid">
+    <div class="hero-content">
+      <p class="eyebrow reveal">
+        <span class="status-dot" aria-hidden="true"></span>
+        {% if profile.availability %}{{ profile.availability }}{% else %}Disponible para nuevos desafíos{% endif %}
+      </p>
+
+      <h1 class="hero-title reveal">
+        <span class="hero-greeting">Hola, soy {{ profile.full_name|default:"Hernán" }}.</span>
+        <span class="text-gradient">Desarrollador Backend</span>
+      </h1>
+
+      <p class="hero-lead reveal">
+        {{ profile.tagline|default:"Desarrollador Backend y estudiante de Ingeniería en Sistemas de Información (UTN). Construyo APIs REST y aplicaciones con Python, Django, Flask, FastAPI y Java con Spring Boot." }}
+      </p>
+
+      <div class="hero-actions reveal">
+        <a class="button button-primary" href="{% url 'projects' %}">
+          Ver proyectos
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+        <a class="button button-ghost" href="{% url 'contact' %}">Hablemos</a>
+        <a class="button button-link" href="{% url 'cv_download' %}">
+          <svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+          CV en PDF
+        </a>
+      </div>
+
+      <div class="hero-social reveal">
+        <span class="hero-social-label">Encontrame en</span>
+        {% include "partials/social_links.html" %}
+      </div>
+
+      <dl class="hero-stats reveal">
+        <div>
+          <dt>Proyectos</dt>
+          <dd><span>+</span>{{ stats.projects }}</dd>
+        </div>
+        <div>
+          <dt>Tecnologías</dt>
+          <dd><span>+</span>{{ stats.skills }}</dd>
+        </div>
+        <div>
+          <dt>Experiencia</dt>
+          <dd><span>+</span>{{ stats.years }}<small>años</small></dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="hero-visual reveal" aria-hidden="true">
+      <div class="hero-orbit orbit-one"></div>
+      <div class="hero-orbit orbit-two"></div>
+
+      <div class="code-window">
+        <div class="code-bar">
+          <span class="window-dots"><i></i><i></i><i></i></span>
+          <span class="code-file">backend_developer.py</span>
+          <span class="code-lang">Python</span>
+        </div>
+        <pre class="code-body"><code><span class="tok-c"># perfil.py</span>
+<span class="tok-k">class</span> <span class="tok-type">BackendDeveloper</span>:
+    name = <span class="tok-s">"{{ profile.full_name|default:"Hernán" }}"</span>
+    role = <span class="tok-s">"Backend Developer"</span>
+    stack = [<span class="tok-s">"Python"</span>, <span class="tok-s">"Django"</span>, <span class="tok-s">"FastAPI"</span>]
+
+    <span class="tok-k">def</span> <span class="tok-fn">build</span>(self):
+        <span class="tok-k">return</span> {
+            <span class="tok-s">"clean_code"</span>: <span class="tok-k">True</span>,
+            <span class="tok-s">"tested"</span>: <span class="tok-k">True</span>,
+            <span class="tok-s">"scalable"</span>: <span class="tok-k">True</span>,
+        }</code></pre>
+        <div class="code-footer">
+          <span class="status-dot" aria-hidden="true"></span>
+          Disponible para nuevos desafíos
+          <span class="code-branch">main</span>
+        </div>
+      </div>
+
+      <div class="floating-chip chip-one"><span>Py</span>Python</div>
+      <div class="floating-chip chip-two"><span>Dj</span>Django</div>
+      <div class="floating-chip chip-three"><span>Fa</span>FastAPI</div>
+      <div class="floating-chip chip-four"><span>My</span>MySQL</div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-tight">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="section-kicker">Especialidades</p>
+      <h2 class="section-title">Lo que hago mejor</h2>
+      <p class="section-subtitle">Del modelado de datos al despliegue: me hago cargo del ciclo completo del backend.</p>
+    </div>
+
+    <div class="feature-grid">
+      <article class="feature-card reveal">
+        <span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#icon-server"></use></svg></span>
+        <h3>APIs y servicios</h3>
+        <p>Desarrollo endpoints y servicios con Python (Django, Flask y FastAPI) y Java con Spring Boot, organizando el código por capas y exponiendo APIs REST con operaciones CRUD.</p>
+        <ul class="feature-list">
+          <li>Django · Flask · FastAPI</li>
+          <li>Spring Boot + Java</li>
+          <li>APIs REST y CRUD</li>
+        </ul>
+      </article>
+
+      <article class="feature-card reveal">
+        <span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#icon-database"></use></svg></span>
+        <h3>Modelado de datos</h3>
+        <p>Diseño e integro bases de datos relacionales como MySQL y PostgreSQL, implementando operaciones CRUD y consultas claras para cada funcionalidad.</p>
+        <ul class="feature-list">
+          <li>MySQL / PostgreSQL</li>
+          <li>Operaciones CRUD</li>
+          <li>Modelado relacional</li>
+        </ul>
+      </article>
+
+      <article class="feature-card reveal">
+        <span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#icon-shield"></use></svg></span>
+        <h3>Calidad y entrega</h3>
+        <p>Depuro errores, ejecuto pruebas funcionales y documento las funcionalidades. Trabajo con Git y GitHub para el control de versiones y la revisión de cambios.</p>
+        <ul class="feature-list">
+          <li>Pruebas funcionales</li>
+          <li>Git y GitHub</li>
+          <li>Documentación técnica</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+{% if featured_skills %}
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head section-head-row reveal">
+      <div>
+        <p class="section-kicker">Stack técnico</p>
+        <h2 class="section-title">Herramientas con las que trabajo</h2>
+        <p class="section-subtitle">Un stack orientado a construir backends mantenibles y escalables.</p>
+      </div>
+      <a class="button button-ghost button-sm" href="{% url 'skills' %}">
+        Ver todas
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+      </a>
+    </div>
+
+    <div class="skills-preview-grid">
+      <ul class="skills-list reveal">
+        {% for skill in featured_skills|slice:":6" %}
+          {% include "partials/skill_item.html" %}
+        {% endfor %}
+      </ul>
+
+      <div class="stack-panel reveal">
+        <p class="stack-panel-label">También trabajo con</p>
+        <div class="stack-tags">
+          <span>Flask</span>
+          <span>Spring Boot</span>
+          <span>SQL</span>
+          <span>PostgreSQL</span>
+          <span>Bootstrap</span>
+          <span>Linux/UNIX</span>
+          <span>APIs REST</span>
+          <span>CRUD</span>
+        </div>
+        <div class="stack-note">
+          <svg class="icon" aria-hidden="true"><use href="#icon-terminal"></use></svg>
+          <p>Formación continua: cursos de Python, bases de datos, Git y desarrollo web.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if featured_projects %}
+<section class="section">
+  <div class="container">
+    <div class="section-head section-head-row reveal">
+      <div>
+        <p class="section-kicker">Portfolio</p>
+        <h2 class="section-title">Proyectos destacados</h2>
+        <p class="section-subtitle">Una selección de lo que construí, con su stack y repositorio.</p>
+      </div>
+      <a class="button button-ghost button-sm" href="{% url 'projects' %}">
+        Todos los proyectos
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+      </a>
+    </div>
+
+    <div class="projects-grid">
+      {% for project in featured_projects %}
+        {% include "partials/project_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if work_experience %}
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head section-head-row reveal">
+      <div>
+        <p class="section-kicker">Trayectoria</p>
+        <h2 class="section-title">Experiencia reciente</h2>
+        <p class="section-subtitle">Dónde trabajé y qué construí en cada etapa.</p>
+      </div>
+      <a class="button button-ghost button-sm" href="{% url 'experience' %}">
+        Ver experiencia
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+      </a>
+    </div>
+
+    <div class="experience-preview">
+      <div class="timeline">
+        {% for item in work_experience %}
+          <article class="timeline-item reveal">
+            <span class="timeline-marker" aria-hidden="true"></span>
+            <div class="timeline-card">
+              <div class="timeline-meta">
+                <span class="timeline-date">{{ item.date_range }}</span>
+                {% if item.is_current %}<span class="badge badge-live">Actual</span>{% endif %}
+                <span class="badge">{{ item.get_kind_display }}</span>
+              </div>
+              <h3>{{ item.role }}</h3>
+              <p class="timeline-company">{{ item.company }}{% if item.location %} · {{ item.location }}{% endif %}</p>
+              <p class="timeline-description">{{ item.description|truncatewords:28 }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      <aside class="education-card reveal">
+        <span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#icon-graduation"></use></svg></span>
+        <h3>Formación</h3>
+        <p class="education-intro">Ingeniería en Sistemas de Información en la UTN, en curso, complementada con cursos de Python, bases de datos y desarrollo web.</p>
+        <ul class="education-list">
+          {% for item in education %}
+            <li>
+              <span class="education-dot" aria-hidden="true"></span>
+              <div>
+                <strong>{{ item.degree }}</strong>
+                <span>{{ item.institution }} · {{ item.date_range }}</span>
+              </div>
+            </li>
+          {% empty %}
+            <li>
+              <span class="education-dot" aria-hidden="true"></span>
+              <div>
+                <strong>Ingeniería en Sistemas de Información</strong>
+                <span>UTN · en curso</span>
+              </div>
+            </li>
+          {% endfor %}
+          <li>
+            <span class="education-dot" aria-hidden="true"></span>
+            <div>
+              <strong>Cursos y certificaciones</strong>
+              <span>Udemy · EducaciónIT · Argentina Programa · Código Facilito</span>
+            </div>
+          </li>
+        </ul>
+        <a class="icon-link" href="{% url 'about' %}">
+          Conocer más sobre mí
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+      </aside>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section cta-section">
+  <div class="container">
+    <div class="cta-panel reveal">
+      <div class="cta-glow" aria-hidden="true"></div>
+      <div class="cta-content">
+        <p class="section-kicker">¿Trabajamos juntos?</p>
+        <h2>Busco un equipo donde el backend importe.</h2>
+        <p>Estoy disponible para oportunidades full-time, freelance o colaboraciones. Si te interesa mi perfil, escribime y conversamos.</p>
+        <div class="cta-actions">
+          <a class="button button-primary" href="{% url 'contact' %}">
+            Escribime
+            <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+          </a>
+          <a class="button button-ghost" href="{% url 'cv_download' %}">
+            <svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+            Descargar CV
+          </a>
+        </div>
+      </div>
+      <div class="cta-signature" aria-hidden="true">{{ profile.initials|default:"DEV" }}</div>
+    </div>
+  </div>
+</section>
+{% endblock %}

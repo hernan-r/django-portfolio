@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block body_class %}page-projects{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="page-hero-glow" aria-hidden="true"></div>
+  <div class="container">
+    <p class="section-kicker reveal">Proyectos</p>
+    <h1 class="page-title reveal">Cosas que construí,<br><span class="text-gradient">problemas que resolví.</span></h1>
+    <p class="page-lead reveal">
+      Herramientas de terminal, aplicaciones móviles y APIs. Cada proyecto incluye el stack, el repositorio y la documentación de instalación.
+    </p>
+  </div>
+</section>
+
+<section class="section section-tight">
+  <div class="container">
+    <div class="projects-toolbar reveal">
+      <form class="search-form" method="get" action="{% url 'projects' %}" role="search">
+        <label class="search-field" for="project-search">
+          <svg class="icon" aria-hidden="true"><use href="#icon-search"></use></svg>
+          <span class="sr-only">Buscar proyectos</span>
+          <input type="search" id="project-search" name="q" value="{{ q }}" placeholder="Buscar por nombre o tecnología…">
+        </label>
+        {% if selected_tech %}<input type="hidden" name="tech" value="{{ selected_tech }}">{% endif %}
+        <button class="button button-primary button-sm" type="submit">Buscar</button>
+        {% if q or selected_tech %}
+          <a class="button button-link button-sm" href="{% url 'projects' %}">Limpiar</a>
+        {% endif %}
+      </form>
+
+      {% if technologies %}
+        <div class="filter-chips" aria-label="Filtrar por tecnología">
+          <a class="filter-chip {% if not selected_tech %}is-active{% endif %}" href="{% url 'projects' %}{% if q %}?q={{ q|urlencode }}{% endif %}">Todas</a>
+          {% for tech in technologies %}
+            <a class="filter-chip {% if selected_tech|lower == tech|lower %}is-active{% endif %}"
+               href="{% url 'projects' %}?tech={{ tech|urlencode }}{% if q %}&amp;q={{ q|urlencode }}{% endif %}">{{ tech }}</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <p class="results-count" role="status">
+      {{ projects|length }} proyecto{{ projects|length|pluralize:"s" }} encontrado{{ projects|length|pluralize:"s" }}
+    </p>
+
+    {% if projects %}
+      <div class="projects-grid">
+        {% for project in projects %}
+          {% include "partials/project_card.html" %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state reveal">
+        <span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#icon-search"></use></svg></span>
+        <h2>No encontré proyectos con esos filtros</h2>
+        <p>Probá con otra palabra o mirá todos los proyectos disponibles.</p>
+        <a class="button button-primary button-sm" href="{% url 'projects' %}">Ver todos</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section cta-section">
+  <div class="container">
+    <div class="cta-panel cta-panel-compact reveal">
+      <div class="cta-glow" aria-hidden="true"></div>
+      <div class="cta-content">
+        <p class="section-kicker">¿Te interesa alguno?</p>
+        <h2>Puedo contarte el detrás de escena.</h2>
+        <p>Decisiones de arquitectura, problemas encontrados y qué mejoraría hoy. Escribime si querés profundizar.</p>
+        <div class="cta-actions">
+          <a class="button button-primary" href="{% url 'contact' %}">Contactarme</a>
+          <a class="button button-ghost" href="{% url 'cv_download' %}">Descargar CV</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

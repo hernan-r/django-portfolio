@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block body_class %}page-about{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="page-hero-glow" aria-hidden="true"></div>
+  <div class="container">
+    <p class="section-kicker reveal">Sobre mí</p>
+    <h1 class="page-title reveal">Curiosidad por cómo funcionan las cosas,<br><span class="text-gradient">obsesión por hacerlas bien.</span></h1>
+    <p class="page-lead reveal">
+      {{ profile.short_bio|default:"Soy desarrollador backend, estudiante de Ingeniería en Sistemas en la UTN y me especializo en construir APIs y aplicaciones mantenibles con Python." }}
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container about-grid">
+    <aside class="about-card reveal">
+      <div class="about-avatar">
+        {% if profile.avatar %}
+          <img src="{{ profile.avatar.url }}" alt="Foto de {{ profile.full_name }}">
+        {% else %}
+          <span class="about-avatar-monogram">{{ profile.initials|default:"DEV" }}</span>
+          <span class="about-avatar-ring" aria-hidden="true"></span>
+        {% endif %}
+      </div>
+
+      <h2 class="about-name">{{ profile.full_name|default:"Hernán" }}</h2>
+      <p class="about-role">{{ profile.headline|default:"Backend Developer" }}</p>
+
+      <ul class="about-facts">
+        {% if profile.location %}
+          <li>
+            <svg class="icon" aria-hidden="true"><use href="#icon-map-pin"></use></svg>
+            {{ profile.location }}
+          </li>
+        {% endif %}
+        {% if profile.email %}
+          <li>
+            <svg class="icon" aria-hidden="true"><use href="#icon-mail"></use></svg>
+            <a href="mailto:{{ profile.email }}">{{ profile.email }}</a>
+          </li>
+        {% endif %}
+        {% if profile.phone %}
+          <li>
+            <svg class="icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+            <a href="tel:{{ profile.phone }}">{{ profile.phone }}</a>
+          </li>
+        {% endif %}
+        {% if profile.availability %}
+          <li>
+            <span class="status-dot" aria-hidden="true"></span>
+            {{ profile.availability }}
+          </li>
+        {% endif %}
+      </ul>
+
+      <div class="about-actions">
+        <a class="button button-primary button-sm" href="{% url 'cv_download' %}">
+          <svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+          Descargar CV
+        </a>
+        <a class="button button-ghost button-sm" href="{% url 'contact' %}">Contacto</a>
+      </div>
+
+      {% include "partials/social_links.html" %}
+    </aside>
+
+    <div class="about-copy reveal">
+      <p class="section-kicker">Mi historia</p>
+      <h2 class="section-title">Desarrollo backend con mirada de producto</h2>
+      {% if profile.bio %}
+        <div class="prose">{{ profile.bio|linebreaks }}</div>
+      {% else %}
+        <div class="prose">
+          <p>Me formé de manera práctica en Python, con Django, Flask y FastAPI, y en Java con Spring Boot, complementando los estudios de Ingeniería en Sistemas de Información en la UTN.</p>
+          <p>Antes de mi rol actual me desempeñé como técnico independiente en reparación de PCs y notebooks, donde resolví incidencias de hardware y software, configuré Linux/UNIX y Windows y atendí clientes.</p>
+          <p>Me interesa escribir código que otra persona pueda entender, con pruebas que den confianza y decisiones técnicas que se sostengan en el tiempo.</p>
+        </div>
+      {% endif %}
+
+      <div class="values-grid">
+        <article class="value-card">
+          <span class="value-number">01</span>
+          <h3>Claridad antes que ingenio</h3>
+          <p>Código simple, nombres claros y responsabilidades bien separadas. La mantenibilidad es una feature.</p>
+        </article>
+        <article class="value-card">
+          <span class="value-number">02</span>
+          <h3>Datos bien modelados</h3>
+          <p>Un buen esquema evita una década de parches. Diseño con integridad, índices y consultas en mente.</p>
+        </article>
+        <article class="value-card">
+          <span class="value-number">03</span>
+          <h3>Aprender haciendo</h3>
+          <p>Proyectos personales, lectura técnica y mucha práctica. Cada error es documentación para la próxima.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if education %}
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="section-kicker">Formación</p>
+      <h2 class="section-title">Ingeniería en Sistemas en la UTN</h2>
+      <p class="section-subtitle">Formación académica y aprendizaje continuo aplicado a proyectos reales.</p>
+    </div>
+
+    <div class="education-timeline">
+      {% for item in education %}
+        <article class="education-entry education-entry--stacked reveal">
+          <div class="education-entry-body">
+            <div class="education-entry-meta">
+              {% if item.is_current %}
+                <span class="badge badge-live">En curso</span>
+              {% elif item.date_range %}
+                <span class="education-entry-date">{{ item.date_range }}</span>
+              {% endif %}
+            </div>
+            <h3>{{ item.degree }}</h3>
+            <p class="education-entry-institution">
+              <svg class="icon" aria-hidden="true"><use href="#icon-graduation"></use></svg>
+              {{ item.institution }}
+            </p>
+            {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if certifications %}
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="section-kicker">Cursos y certificaciones</p>
+      <h2 class="section-title">Formación complementaria</h2>
+      <p class="section-subtitle">Cursos realizados en plataformas y programas de formación.</p>
+    </div>
+
+    <div class="education-timeline education-timeline-compact">
+      {% for item in certifications %}
+        <article class="education-entry education-entry--stacked reveal">
+          <div class="education-entry-body">
+            {% if item.year %}
+              <div class="education-entry-meta">
+                <span class="education-entry-date">{{ item.year }}</span>
+              </div>
+            {% endif %}
+            <h3>{{ item.name }}</h3>
+            <p class="education-entry-institution">
+              <svg class="icon" aria-hidden="true"><use href="#icon-graduation"></use></svg>
+              {{ item.issuer }}
+            </p>
+            {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="container">
+    <div class="cta-panel cta-panel-compact reveal">
+      <div class="cta-glow" aria-hidden="true"></div>
+      <div class="cta-content">
+        <p class="section-kicker">Siguiente paso</p>
+        <h2>¿Mi perfil encaja con tu equipo?</h2>
+        <p>Podés ver mis proyectos o escribirme directamente. Respondo todos los mensajes.</p>
+        <div class="cta-actions">
+          <a class="button button-primary" href="{% url 'projects' %}">Ver proyectos</a>
+          <a class="button button-ghost" href="{% url 'contact' %}">Contactarme</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

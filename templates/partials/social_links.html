@@ -1,0 +1,27 @@
+<div class="social-links" aria-label="Redes y contacto">
+  {% if profile.github_url %}
+    <a href="{{ profile.github_url }}" target="_blank" rel="noopener noreferrer" aria-label="Perfil de GitHub" title="GitHub">
+      <svg class="icon" aria-hidden="true"><use href="#icon-github"></use></svg>
+    </a>
+  {% endif %}
+  {% if profile.linkedin_url %}
+    <a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener noreferrer" aria-label="Perfil de LinkedIn" title="LinkedIn">
+      <svg class="icon" aria-hidden="true"><use href="#icon-linkedin"></use></svg>
+    </a>
+  {% endif %}
+  {% if profile.twitter_url %}
+    <a href="{{ profile.twitter_url }}" target="_blank" rel="noopener noreferrer" aria-label="Perfil de X / Twitter" title="X / Twitter">
+      <svg class="icon" aria-hidden="true"><use href="#icon-twitter"></use></svg>
+    </a>
+  {% endif %}
+  {% if profile.website_url %}
+    <a href="{{ profile.website_url }}" target="_blank" rel="noopener noreferrer" aria-label="Sitio web personal" title="Sitio web">
+      <svg class="icon" aria-hidden="true"><use href="#icon-globe"></use></svg>
+    </a>
+  {% endif %}
+  {% if profile.email %}
+    <a href="mailto:{{ profile.email }}" aria-label="Enviar un email" title="Email">
+      <svg class="icon" aria-hidden="true"><use href="#icon-mail"></use></svg>
+    </a>
+  {% endif %}
+</div>

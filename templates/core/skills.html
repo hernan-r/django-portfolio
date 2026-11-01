@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block body_class %}page-skills{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="page-hero-glow" aria-hidden="true"></div>
+  <div class="container">
+    <p class="section-kicker reveal">Skills</p>
+    <h1 class="page-title reveal">Tecnologías que uso para<br><span class="text-gradient">construir y escalar.</span></h1>
+    <p class="page-lead reveal">
+      Un stack enfocado en backend, APIs y datos. Los porcentajes reflejan mi nivel de experiencia y uso real en proyectos, no una certificación.
+    </p>
+  </div>
+</section>
+
+<section class="section section-tight">
+  <div class="container">
+    <div class="skills-groups">
+      {% for group in skills_grouped %}
+        <article class="skills-group reveal">
+          <header class="skills-group-head">
+            <span class="skills-group-icon">
+              {% if group.code == 'languages' %}
+                <svg class="icon" aria-hidden="true"><use href="#icon-code"></use></svg>
+              {% elif group.code == 'backend' %}
+                <svg class="icon" aria-hidden="true"><use href="#icon-server"></use></svg>
+              {% elif group.code == 'database' %}
+                <svg class="icon" aria-hidden="true"><use href="#icon-database"></use></svg>
+              {% elif group.code == 'tools' %}
+                <svg class="icon" aria-hidden="true"><use href="#icon-terminal"></use></svg>
+              {% else %}
+                <svg class="icon" aria-hidden="true"><use href="#icon-globe"></use></svg>
+              {% endif %}
+            </span>
+            <div>
+              <h2>{{ group.label }}</h2>
+              <p>{{ group.skills|length }} skill{{ group.skills|length|pluralize:"s" }} registrada{{ group.skills|length|pluralize:"s" }}</p>
+            </div>
+          </header>
+
+          <ul class="skills-list">
+            {% for skill in group.skills %}
+              {% include "partials/skill_item.html" %}
+            {% endfor %}
+          </ul>
+        </article>
+      {% empty %}
+        <p class="empty-state">Todavía no hay skills cargadas. Podés agregarlas desde el panel de administración.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="skills-extra">
+      <div class="section-head reveal">
+        <p class="section-kicker">Complementos</p>
+        <h2 class="section-title">Herramientas del día a día</h2>
+        <p class="section-subtitle">Lo que rodea al código y hace que un proyecto llegue a producción sin sorpresas.</p>
+      </div>
+
+      <div class="tool-grid">
+        <article class="tool-card reveal">
+          <h3>Versionado y colaboración</h3>
+          <p>Git, GitHub, ramas por feature, pull requests y revisión de cambios.</p>
+          <div class="stack-tags">
+            <span>Git</span><span>GitHub</span><span>GitHub Flow</span>
+          </div>
+        </article>
+        <article class="tool-card reveal">
+          <h3>Sistemas y entornos</h3>
+          <p>Configuración y uso de Linux/UNIX y Windows, backups y recuperación de información.</p>
+          <div class="stack-tags">
+            <span>Linux/UNIX</span><span>Windows</span><span>Backups</span>
+          </div>
+        </article>
+        <article class="tool-card reveal">
+          <h3>Calidad y documentación</h3>
+          <p>Depuración de errores, pruebas funcionales y documentación técnica de funcionalidades.</p>
+          <div class="stack-tags">
+            <span>Depuración</span><span>Pruebas funcionales</span><span>Documentación</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="cta-panel cta-panel-compact reveal">
+      <div class="cta-glow" aria-hidden="true"></div>
+      <div class="cta-content">
+        <p class="section-kicker">Del stack al producto</p>
+        <h2>Estas herramientas están en mis proyectos.</h2>
+        <p>Mirá cómo se combinan en casos reales, con repositorio disponible en GitHub.</p>
+        <div class="cta-actions">
+          <a class="button button-primary" href="{% url 'projects' %}">Explorar proyectos</a>
+          <a class="button button-ghost" href="{% url 'contact' %}">Hablemos</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

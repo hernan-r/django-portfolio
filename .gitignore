@@ -1,0 +1,28 @@
+# Entornos y secretos
+.venv/
+venv/
+.env
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+media/*
+!media/.gitkeep
+
+# macOS / editores
+.DS_Store
+.idea/
+.vscode/

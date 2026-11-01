@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block body_class %}page-error{% endblock %}
+
+{% block content %}
+<section class="error-page">
+  <div class="error-glow" aria-hidden="true"></div>
+  <div class="container error-content">
+    <p class="error-code" aria-hidden="true">404</p>
+    <p class="section-kicker">Página no encontrada</p>
+    <h1 class="page-title">Esta ruta no existe<span class="text-gradient">.</span></h1>
+    <p class="page-lead">Puede que el enlace esté roto o que la página se haya movido. Probemos desde el inicio.</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="{% url 'home' %}">
+        Volver al inicio
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+      </a>
+      <a class="button button-ghost" href="{% url 'projects' %}">Ver proyectos</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

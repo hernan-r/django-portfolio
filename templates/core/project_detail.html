@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block body_class %}page-project-detail{% endblock %}
+
+{% block content %}
+<section class="project-detail-hero">
+  <div class="page-hero-glow" aria-hidden="true"></div>
+  <div class="container">
+    <nav class="breadcrumb reveal" aria-label="Migas de pan">
+      <a href="{% url 'home' %}">Inicio</a>
+      <span aria-hidden="true">/</span>
+      <a href="{% url 'projects' %}">Proyectos</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{{ project.title }}</span>
+    </nav>
+
+    <div class="project-detail-head reveal">
+      <div>
+        <p class="section-kicker">Proyecto · {{ project.year }}</p>
+        <h1 class="page-title">{{ project.title }}</h1>
+        <p class="page-lead">{{ project.short_description }}</p>
+        <ul class="tech-chips tech-chips-lg" aria-label="Tecnologías utilizadas">
+          {% for tech in project.technology_list %}
+            <li>{{ tech }}</li>
+          {% endfor %}
+        </ul>
+        <div class="hero-actions">
+          {% if project.repository_url %}
+            <a class="button button-primary" href="{{ project.repository_url }}" target="_blank" rel="noopener noreferrer">
+              <svg class="icon" aria-hidden="true"><use href="#icon-github"></use></svg>
+              Ver repositorio
+            </a>
+          {% endif %}
+          {% if project.demo_url %}
+            <a class="button button-ghost" href="{{ project.demo_url }}" target="_blank" rel="noopener noreferrer">
+              <svg class="icon" aria-hidden="true"><use href="#icon-external"></use></svg>
+              Ver demo
+            </a>
+          {% endif %}
+          {% if not project.repository_url and not project.demo_url %}
+            <a class="button button-ghost" href="{% url 'contact' %}">Consultar por el proyecto</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-tight">
+  <div class="container">
+    <div class="project-cover reveal">
+      {% if project.image %}
+        <img src="{{ project.image.url }}" alt="Captura del proyecto {{ project.title }}">
+      {% else %}
+        <span class="project-cover-placeholder">
+          <span class="project-cover-monogram">{{ project.initials }}</span>
+          <svg class="icon project-cover-icon" aria-hidden="true"><use href="#icon-code"></use></svg>
+        </span>
+      {% endif %}
+    </div>
+
+    <div class="project-detail-grid">
+      <article class="project-description reveal">
+        <p class="section-kicker">El proyecto</p>
+        <h2 class="section-title">Descripción</h2>
+        <div class="prose">{{ project.description|linebreaks }}</div>
+      </article>
+
+      <aside class="project-sidebar reveal">
+        <div class="sidebar-card">
+          <h2>Ficha técnica</h2>
+          <dl class="sidebar-list">
+            <div>
+              <dt>Año</dt>
+              <dd>{{ project.year }}</dd>
+            </div>
+            <div>
+              <dt>Tecnologías</dt>
+              <dd>{{ project.technology_list|join:", " }}</dd>
+            </div>
+            <div>
+              <dt>Repositorio</dt>
+              <dd>
+                {% if project.repository_url %}
+                  <a href="{{ project.repository_url }}" target="_blank" rel="noopener noreferrer">GitHub <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></a>
+                {% else %}
+                  Privado / no disponible
+                {% endif %}
+              </dd>
+            </div>
+            <div>
+              <dt>Demo</dt>
+              <dd>
+                {% if project.demo_url %}
+                  <a href="{{ project.demo_url }}" target="_blank" rel="noopener noreferrer">Ver online <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></a>
+                {% else %}
+                  No disponible
+                {% endif %}
+              </dd>
+            </div>
+          </dl>
+          <a class="button button-primary button-block button-sm" href="{% url 'contact' %}">Consultar por este proyecto</a>
+        </div>
+
+        <div class="sidebar-card sidebar-note">
+          <svg class="icon" aria-hidden="true"><use href="#icon-sparkles"></use></svg>
+          <p>¿Querés ver más? En el repositorio vas a encontrar el código, la documentación y las instrucciones de instalación.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+{% if related_projects %}
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="section-kicker">Seguí explorando</p>
+      <h2 class="section-title">Otros proyectos</h2>
+    </div>
+    <div class="projects-grid">
+      {% for project in related_projects %}
+        {% include "partials/project_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
