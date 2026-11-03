@@ -69,7 +69,7 @@ dinámicamente** desde la base de datos.
 
 - Python 3.11 – 3.13 (recomendado 3.11)
 - Django 5.2
-- SQLite por defecto (MySQL opcional)
+- PostgreSQL en Render, SQLite en local y MySQL opcional
 - Pillow (imágenes de perfil y proyectos)
 - ReportLab (CV en PDF)
 - WhiteNoise (archivos estáticos en producción)
@@ -192,10 +192,24 @@ El formulario incluye:
 
 ---
 
-## Base de datos MySQL (opcional)
+## Base de datos
 
-El proyecto usa SQLite por defecto. Para MySQL, instalá el driver y configurá
-las variables:
+El proyecto usa SQLite en local y PostgreSQL en Render. La prioridad de
+configuración es:
+
+1. `DATABASE_URL` (PostgreSQL).
+2. Variables `DB_ENGINE=mysql` (MySQL).
+3. SQLite local por defecto.
+
+### PostgreSQL
+
+```env
+DATABASE_URL=postgresql://usuario:password@127.0.0.1:5432/portfolio
+```
+
+### MySQL (opcional)
+
+Instalá el driver y configurá las variables:
 
 ```bash
 pip install mysqlclient
@@ -265,24 +279,88 @@ media/                  Imágenes subidas desde el panel
 
 ---
 
-## Despliegue (resumen)
+## Deploy en Render
 
-1. Creá un `.env` de producción con `DJANGO_DEBUG=False`, una `DJANGO_SECRET_KEY`
-   nueva y `DJANGO_ALLOWED_HOSTS=tudominio.com`.
-2. Ejecutá `python manage.py collectstatic`.
-3. Serví la app con Gunicorn (o similar) detrás de Nginx:
+El proyecto ya incluye lo necesario para desplegar en Render:
+
+- `render.yaml`: web service + PostgreSQL.
+- `build.sh`: instala dependencias, ejecuta `collectstatic` y aplica migraciones.
+- `gunicorn` como servidor WSGI.
+- Soporte para `DATABASE_URL` (PostgreSQL).
+- WhiteNoise para servir los archivos estáticos.
+- Configuración automática de `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`, HTTPS y cookies seguras cuando `DJANGO_DEBUG=False`.
+
+### Opción 1: Blueprint (recomendado)
+
+1. Subí el repositorio a GitHub.
+2. En Render, elegí **New → Blueprint**.
+3. Conectá el repositorio y aplicá el blueprint.
+4. Render crea automáticamente:
+   - El servicio web `django-portfolio`.
+   - La base de datos PostgreSQL `portfolio-db`.
+   - `DJANGO_SECRET_KEY`, `DJANGO_DEBUG=False`, `DATABASE_URL` y `DJANGO_ALLOWED_HOSTS=.onrender.com`.
+5. Cuando termine el deploy, creá el superusuario desde **Shell**:
 
    ```bash
-   pip install gunicorn
-   gunicorn config.wsgi:application
+   python manage.py createsuperuser
    ```
 
-4. WhiteNoise ya está configurado para servir los estáticos.
-5. Serví `media/` desde Nginx o un storage externo.
-6. Configurá HTTPS y actualizá `DJANGO_CSRF_TRUSTED_ORIGINS` si corresponde.
-7. Programá backups de la base de datos.
+6. Abrí `https://<nombre-del-servicio>.onrender.com/` y entrá a `/admin/`.
 
-> Para producción se recomienda PostgreSQL o MySQL en lugar de SQLite.
+### Opción 2: configuración manual
+
+Creá un **Web Service** con runtime Python y configurá:
+
+```text
+Build Command: ./build.sh
+Start Command: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+```
+
+Después:
+
+1. Creá una base PostgreSQL en Render.
+2. Copiá su **Internal Database URL** en la variable `DATABASE_URL` del web service.
+3. Agregá estas variables:
+
+| Variable | Valor |
+| --- | --- |
+| `DJANGO_DEBUG` | `False` |
+| `DJANGO_SECRET_KEY` | Una clave nueva y secreta |
+| `DJANGO_ALLOWED_HOSTS` | `.onrender.com,tudominio.com` |
+| `DATABASE_URL` | Internal Database URL de PostgreSQL |
+| `PYTHON_VERSION` | `3.11.9` |
+
+### Archivos subidos (media)
+
+El sistema de archivos de Render es efímero: las imágenes subidas desde el admin
+se pierden en cada redeploy. Para conservarlas:
+
+- En planes pagos, agregá un disco persistente en `render.yaml` (hay un ejemplo
+  comentado) y definí `DJANGO_MEDIA_ROOT=/var/data/media`.
+- O usá un storage externo (S3, Cloudinary, etc.).
+
+### Dominio propio
+
+1. Agregá el dominio en **Settings → Custom Domains** de Render.
+2. Sumalo a `DJANGO_ALLOWED_HOSTS`.
+3. Agregalo también a `DJANGO_CSRF_TRUSTED_ORIGINS` con el esquema:
+   `https://tudominio.com`.
+
+> `build.sh` ejecuta las migraciones en cada deploy. Los datos de PostgreSQL se
+> conservan; los archivos de `media/` no, salvo que configures un disco o storage
+> externo.
+
+### Otros hostings
+
+El proyecto también funciona con cualquier servidor que soporte Python:
+
+```bash
+python manage.py collectstatic --no-input
+python manage.py migrate
+gunicorn config.wsgi:application --bind 0.0.0.0:8000
+```
+
+Serví `media/` desde Nginx o un storage externo y configurá HTTPS.
 
 ---
 
