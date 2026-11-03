@@ -1,28 +1,66 @@
 # Portfolio Backend · Django
 
-Portfolio personal para un **Backend Developer**, construido con Django 5.2.
-Incluye presentación, formación en la UTN, skills, proyectos, experiencia,
-formulario de contacto y un **CV en PDF generado dinámicamente** desde la base
-de datos.
+Portfolio personal de **Hernán Rosero**, Desarrollador Backend y estudiante de
+Ingeniería en Sistemas de Información (UTN).
 
-Todo el contenido se administra desde el panel de Django: no hace falta tocar
-código para actualizar proyectos, experiencia o datos personales.
+Sitio construido con **Django 5.2**, HTML, CSS y JavaScript vanilla, con tema
+claro/oscuro, diseño responsive, panel de administración y **CV en PDF generado
+dinámicamente** desde la base de datos.
+
+![Vista previa del portfolio](docs/screenshots/home-hero-dark.jpg)
+
+<p>
+  <img alt="Django" src="https://img.shields.io/badge/Django-5.2-0C4B33?logo=django&logoColor=white">
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white">
+  <img alt="Tests" src="https://img.shields.io/badge/tests-19%20passing-2ea043">
+  <img alt="Licencia" src="https://img.shields.io/badge/licencia-uso%20personal-ef4444">
+</p>
+
+---
+
+## Capturas
+
+### Proyectos y experiencia
+
+| Proyectos | Experiencia |
+| --- | --- |
+| ![Listado de proyectos](docs/screenshots/proyectos.jpg) | ![Experiencia y formación](docs/screenshots/experiencia.jpg) |
+
+### Skills y sobre mí
+
+| Skills | Sobre mí |
+| --- | --- |
+| ![Skills por categoría](docs/screenshots/skills.jpg) | ![Biografía y formación](docs/screenshots/sobre-mi.jpg) |
+
+### Detalle de proyecto y contacto
+
+| Detalle de proyecto | Contacto |
+| --- | --- |
+| ![Detalle de Task Tracker CLI](docs/screenshots/proyecto-detalle.jpg) | ![Formulario de contacto](docs/screenshots/contacto.jpg) |
+
+### Tema claro y responsive
+
+| Tema claro | Vista móvil |
+| --- | --- |
+| ![Inicio con tema claro](docs/screenshots/home-hero-light.jpg) | ![Inicio en móvil](docs/screenshots/home-mobile.jpg) |
+
+> Las capturas fueron tomadas del sitio real en funcionamiento.
 
 ---
 
 ## Funcionalidades
 
-- **Inicio**: presentación personal, stack destacado, proyectos y experiencia reciente.
-- **Sobre mí**: biografía, perfil profesional y formación académica (UTN).
+- **Inicio**: presentación, stack destacado, proyectos y experiencia reciente.
+- **Sobre mí**: biografía, perfil profesional, formación académica y cursos.
 - **Skills**: habilidades agrupadas por categoría, con nivel y barras animadas.
-- **Proyectos**: listado con búsqueda, filtro por tecnología, detalle, repositorio y demo.
-- **Experiencia**: trayectoria laboral, freelance y proyectos personales en formato timeline.
+- **Proyectos**: listado con búsqueda, filtro por tecnología y página de detalle.
+- **Experiencia**: trayectoria laboral y formación complementaria en formato timeline.
 - **Contacto**: formulario validado con honeypot anti-spam y límite de envíos por sesión.
   Los mensajes quedan guardados en el panel y se puede configurar una notificación por email.
-- **CV descargable**: PDF generado al vuelo con los datos del perfil, experiencia,
-  skills, proyectos y formación. Se actualiza solo cuando cambiás el contenido.
-- **Panel de administración**: perfil único, skills, proyectos, experiencia, formación
-  y bandeja de mensajes.
+- **CV descargable**: PDF generado al vuelo con perfil, skills, experiencia,
+  proyectos, formación y certificaciones.
+- **Panel de administración**: perfil único, skills, proyectos, experiencia,
+  formación, cursos y bandeja de mensajes.
 - **Extras**: tema claro/oscuro persistente, navegación responsive, animaciones al
   hacer scroll, SEO básico, página 404 personalizada y accesibilidad (skip link,
   focus visible, labels, `aria-*`).
@@ -36,6 +74,21 @@ código para actualizar proyectos, experiencia o datos personales.
 - ReportLab (CV en PDF)
 - WhiteNoise (archivos estáticos en producción)
 - HTML, CSS y JavaScript vanilla (sin frameworks de frontend)
+
+### Contenido del portfolio
+
+- **Perfil**: Hernán Rosero · Desarrollador Backend · Rosario, Santa Fe, Argentina.
+- **Skills**: Python, Java, SQL; Django, Flask, FastAPI, Spring Boot, Bootstrap;
+  MySQL, PostgreSQL; Git, GitHub, Linux/UNIX.
+- **Experiencia**: Desarrollador Backend Junior en Deepyze y técnico independiente
+  en reparación de PCs y notebooks.
+- **Formación**: Ingeniería en Sistemas de Información (UTN, en curso).
+- **Cursos**: Udemy, EducaciónIT, Argentina Programa y Código Facilito.
+- **Proyectos**:
+  - [Task Tracker CLI](https://github.com/hernan-r/task-tracker) — gestor de tareas
+    para terminal en Java, sin dependencias externas.
+  - [Habit Widget](https://github.com/hernan-r/habit-widget) — app de hábitos para
+    iOS 17+ con SwiftUI, SwiftData y widgets interactivos.
 
 ---
 
@@ -52,7 +105,7 @@ pip install -r requirements.txt
 # 3. Configurar variables de entorno (opcional en desarrollo)
 cp .env.example .env
 
-# 4. Aplicar migraciones (incluye contenido de ejemplo)
+# 4. Aplicar migraciones (incluye el contenido inicial)
 python manage.py migrate
 
 # 5. Crear tu usuario administrador
@@ -68,8 +121,8 @@ Abrí:
 - Panel: <http://127.0.0.1:8000/admin/>
 
 > Las migraciones `core/0002_seed_content.py` y `core/0005_real_content.py`
-> cargan contenido inicial basado en el CV de Hernán Rosero. Podés ajustar o
-> reemplazar esos datos desde el panel de administración.
+> cargan el contenido inicial basado en el CV. Podés ajustar o reemplazar esos
+> datos desde el panel de administración.
 
 ---
 
@@ -87,15 +140,6 @@ Ingresá al panel con tu superusuario. Vas a encontrar:
 | **Cursos y certificaciones** | Curso, institución, año, descripción y enlace. |
 | **Mensajes de contacto** | Bandeja de entrada. Podés marcar como leídos/no leídos. |
 
-### Datos que conviene cambiar primero
-
-1. **Perfil →** nombre completo, titular, email, teléfono, ubicación, GitHub y LinkedIn.
-2. **Perfil →** biografía corta, biografía completa y resumen para el CV.
-3. **Formación →** reemplazar o ajustar los datos de la UTN.
-4. **Proyectos →** títulos, descripciones, URLs de repositorio y demo (o desmarcar "publicado").
-5. **Experiencia →** empresas, fechas y descripciones reales.
-6. **Skills →** ajustar niveles y destacadas.
-
 ### Imágenes
 
 - Foto de perfil: se sube en **Perfil**. Si no hay foto se muestra un monograma.
@@ -112,11 +156,11 @@ ReportLab usando:
 - Skills agrupadas por categoría.
 - Experiencia laboral y freelance.
 - Proyectos publicados.
-- Formación académica.
+- Formación académica y cursos/certificaciones.
 
-El archivo se descarga como `CV-nombre-apellido.pdf`. No hay que subir ni
-actualizar ningún PDF a mano: cambiás los datos en el panel y el próximo
-download ya refleja los cambios.
+El archivo se descarga como `CV-hernan-rosero.pdf`. No hay que subir ni actualizar
+ningún PDF a mano: cambiás los datos en el panel y el próximo download ya refleja
+los cambios.
 
 ---
 
@@ -186,12 +230,12 @@ búsqueda/filtros, descarga del PDF, formulario de contacto, honeypot y rate lim
 ```text
 config/                 Configuración y URLs del proyecto
 core/
-  models.py             Perfil, formación, skills, proyectos, experiencia, mensajes
+  models.py             Perfil, formación, cursos, skills, proyectos, experiencia, mensajes
   views.py              Vistas públicas y descarga del CV
   forms.py              Formulario de contacto
   admin.py              Panel de administración personalizado
   utils.py              Generación del PDF con ReportLab
-  migrations/           Esquema + contenido inicial de ejemplo
+  migrations/           Esquema + contenido inicial
   tests.py              Tests automatizados
 templates/
   base.html             Layout, navegación, footer y toasts
@@ -200,6 +244,8 @@ templates/
 static/
   css/styles.css        Diseño responsive con tema claro/oscuro
   js/main.js            Tema, menú móvil, animaciones, toasts
+docs/
+  screenshots/          Capturas usadas en este README
 media/                  Imágenes subidas desde el panel
 ```
 
@@ -212,7 +258,7 @@ media/                  Imágenes subidas desde el panel
 | `/skills/` | Skills por categoría |
 | `/proyectos/` | Proyectos con búsqueda y filtros |
 | `/proyectos/<slug>/` | Detalle del proyecto |
-| `/experiencia/` | Experiencia y proyectos personales |
+| `/experiencia/` | Experiencia y formación complementaria |
 | `/contacto/` | Formulario de contacto |
 | `/cv/` | Descarga del CV en PDF |
 | `/admin/` | Panel de administración |
