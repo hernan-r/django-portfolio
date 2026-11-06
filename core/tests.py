@@ -85,6 +85,29 @@ class ProjectModelTests(TestCase):
         self.assertEqual(project.initials, "AG")
 
 
+class ExperienceModelTests(TestCase):
+    def test_date_range_uses_dates(self):
+        experience = Experience.objects.create(
+            role="Backend Developer",
+            company="Acme",
+            start_date=date(2025, 1, 1),
+            is_current=True,
+            description="APIs.",
+        )
+        self.assertEqual(experience.date_range, "01/2025 – Actualidad")
+
+    def test_date_label_overrides_date_range(self):
+        experience = Experience.objects.create(
+            role="Backend Developer",
+            company="Acme",
+            start_date=date(2025, 1, 1),
+            is_current=False,
+            date_label="(2025-2026)",
+            description="APIs.",
+        )
+        self.assertEqual(experience.date_range, "(2025-2026)")
+
+
 class PageTests(TestCase):
     @classmethod
     def setUpTestData(cls):

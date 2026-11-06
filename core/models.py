@@ -281,6 +281,15 @@ class Experience(models.Model):
     start_date = models.DateField("fecha de inicio")
     end_date = models.DateField("fecha de fin", blank=True, null=True)
     is_current = models.BooleanField("actual", default=False)
+    date_label = models.CharField(
+        "fecha personalizada",
+        max_length=40,
+        blank=True,
+        help_text=(
+            "Opcional. Si la completás, reemplaza el rango calculado con las "
+            "fechas. Ej: (2025-2026)."
+        ),
+    )
     description = models.TextField(
         "descripción",
         help_text="Una línea por viñeta. Se muestran como lista.",
@@ -301,6 +310,8 @@ class Experience(models.Model):
 
     @property
     def date_range(self) -> str:
+        if self.date_label:
+            return self.date_label
         start = self.start_date.strftime("%m/%Y")
         if self.is_current:
             return f"{start} – Actualidad"

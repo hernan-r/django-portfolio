@@ -156,7 +156,7 @@ class ExperienceAdmin(admin.ModelAdmin):
         ),
         (
             "Fechas",
-            {"fields": ("start_date", "end_date", "is_current")},
+            {"fields": ("start_date", "end_date", "is_current", "date_label")},
         ),
         (
             "Detalle",
