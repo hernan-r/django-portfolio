@@ -12,7 +12,7 @@ dinámicamente** desde la base de datos.
 <p>
   <img alt="Django" src="https://img.shields.io/badge/Django-5.2-0C4B33?logo=django&logoColor=white">
   <img alt="Python" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-19%20passing-2ea043">
+  <img alt="Tests" src="https://img.shields.io/badge/tests-24%20passing-2ea043">
   <img alt="Licencia" src="https://img.shields.io/badge/licencia-uso%20personal-ef4444">
 </p>
 
@@ -84,6 +84,7 @@ dinámicamente** desde la base de datos.
   en reparación de PCs y notebooks.
 - **Formación**: Ingeniería en Sistemas de Información (UTN, en curso).
 - **Cursos**: Udemy, EducaciónIT, Argentina Programa y Código Facilito.
+- **CV**: teléfono y habilidades interpersonales que solo aparecen en el PDF.
 - **Proyectos**:
   - [Task Tracker CLI](https://github.com/hernan-r/task-tracker) — gestor de tareas
     para terminal en Java, sin dependencias externas.
@@ -132,8 +133,8 @@ Ingresá al panel con tu superusuario. Vas a encontrar:
 
 | Sección | Para qué sirve |
 | --- | --- |
-| **Perfil** | Nombre, titular, foto, biografías, contacto, redes, años de experiencia y resumen del CV. Es un registro único. |
-| **Skills** | Nombre, categoría, nivel (0–100), orden y si se destaca en el inicio. |
+| **Perfil** | Nombre, titular, foto, biografías, contacto, redes, años de experiencia y resumen del CV. Incluye datos exclusivos del PDF: titular, teléfono y habilidades interpersonales. Es un registro único. |
+| **Skills** | Nombre, categoría, nivel (0–100), orden, si se destaca en el inicio y si se muestra en el CV. |
 | **Proyectos** | Título, slug, año, descripciones, tecnologías (separadas por comas), imagen, repo, demo, destacado y publicado. |
 | **Experiencia** | Rol, empresa, tipo (laboral/freelance/personal), fechas, viñetas, stack y enlace. |
 | **Formación** | Institución, título, fechas, descripción y si está en curso. |
@@ -152,11 +153,14 @@ Ingresá al panel con tu superusuario. Vas a encontrar:
 El botón **Descargar CV** apunta a `/cv/`. El PDF se arma en el momento con
 ReportLab usando:
 
-- Datos de contacto y resumen del perfil.
-- Skills agrupadas por categoría.
-- Experiencia laboral y freelance.
-- Proyectos publicados.
+- Titular, datos de contacto y resumen del perfil.
+- Skills agrupadas por categoría (solo las marcadas como **mostrar en el CV**).
+- Experiencia laboral y freelance con rango de años.
 - Formación académica y cursos/certificaciones.
+- Habilidades interpersonales del perfil.
+
+En **Perfil → Datos para el CV** podés definir un titular y un teléfono que solo
+aparecen en el PDF, sin publicarse en el sitio.
 
 El archivo se descarga como `CV-hernan-rosero.pdf`. No hay que subir ni actualizar
 ningún PDF a mano: cambiás los datos en el panel y el próximo download ya refleja

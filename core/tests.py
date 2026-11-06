@@ -13,6 +13,7 @@ from .models import (
     Project,
     Skill,
 )
+from .utils import _year_range
 
 
 def create_profile(**overrides):
@@ -106,6 +107,34 @@ class ExperienceModelTests(TestCase):
             description="APIs.",
         )
         self.assertEqual(experience.date_range, "(2025-2026)")
+
+
+class CvTests(TestCase):
+    def test_year_range_uses_date_label(self):
+        experience = Experience(
+            role="Backend Developer",
+            company="Deepyze",
+            start_date=date(2025, 1, 1),
+            is_current=False,
+            date_label="(2025-2026)",
+        )
+        self.assertEqual(_year_range(experience), "2025–2026")
+
+    def test_year_range_uses_dates(self):
+        experience = Experience(
+            role="Técnico",
+            company="Autónomo",
+            start_date=date(2021, 1, 1),
+            end_date=date(2023, 12, 31),
+        )
+        self.assertEqual(_year_range(experience), "2021–2023")
+
+    def test_cv_phone_is_not_rendered_on_site(self):
+        create_profile(cv_phone="+54 341 3646168")
+        for name in ("home", "about", "contact"):
+            with self.subTest(page=name):
+                response = self.client.get(reverse(name))
+                self.assertNotContains(response, "+54 341 3646168")
 
 
 class PageTests(TestCase):

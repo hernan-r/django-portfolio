@@ -53,6 +53,28 @@ class Profile(models.Model):
         blank=True,
         help_text="Si lo dejás vacío se usa la biografía corta.",
     )
+    cv_headline = models.CharField(
+        "titular para el CV",
+        max_length=150,
+        blank=True,
+        help_text=(
+            "Opcional. Si lo dejás vacío se usa el titular del perfil. "
+            "Ej: Desarrollador Backend."
+        ),
+    )
+    cv_phone = models.CharField(
+        "teléfono para el CV",
+        max_length=40,
+        blank=True,
+        help_text="Opcional. Solo se muestra en el PDF, no en el sitio.",
+    )
+    soft_skills = models.TextField(
+        "habilidades interpersonales",
+        blank=True,
+        help_text=(
+            "Una por línea. Se muestran en el CV separadas por ' · '."
+        ),
+    )
     updated_at = models.DateTimeField("actualizado el", auto_now=True)
 
     class Meta:
@@ -172,6 +194,11 @@ class Skill(models.Model):
         help_text="Opcional: un emoji o símbolo corto (ej: 🐍).",
     )
     is_featured = models.BooleanField("destacada", default=False)
+    show_in_cv = models.BooleanField(
+        "mostrar en el CV",
+        default=True,
+        help_text="Desmarcá para ocultarla solo del PDF descargable.",
+    )
     order = models.PositiveSmallIntegerField("orden", default=0)
 
     class Meta:

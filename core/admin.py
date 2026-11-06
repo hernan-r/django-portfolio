@@ -49,7 +49,19 @@ class ProfileAdmin(admin.ModelAdmin):
         ),
         (
             "Datos para el CV",
-            {"fields": ("years_experience", "updated_at")},
+            {
+                "fields": (
+                    "years_experience",
+                    "cv_headline",
+                    "cv_phone",
+                    "soft_skills",
+                    "updated_at",
+                ),
+                "description": (
+                    "Estos campos solo se usan en el PDF descargable. "
+                    "El teléfono del CV no se publica en el sitio."
+                ),
+            },
         ),
     )
     readonly_fields = ("avatar_preview", "updated_at")
@@ -78,9 +90,16 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Skill)
 class SkillAdmin(admin.ModelAdmin):
-    list_display = ("name", "category", "level", "is_featured", "order")
-    list_editable = ("level", "is_featured", "order")
-    list_filter = ("category", "is_featured")
+    list_display = (
+        "name",
+        "category",
+        "level",
+        "is_featured",
+        "show_in_cv",
+        "order",
+    )
+    list_editable = ("level", "is_featured", "show_in_cv", "order")
+    list_filter = ("category", "is_featured", "show_in_cv")
     search_fields = ("name",)
     ordering = ("category", "order", "name")
 
