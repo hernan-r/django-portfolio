@@ -27,8 +27,22 @@ services:
           name: portfolio-db
           property: connectionString
 
-    # Para conservar las imágenes subidas desde el admin, usá un disco
-    # persistente (planes pagos) y descomentá estas líneas:
+    # Para conservar las imágenes subidas desde el admin, configurá un storage
+    # S3-compatible con estas variables (ver README → "Archivos subidos (media)"):
+    #   - key: DJANGO_STORAGE_BACKEND
+    #     value: "s3"
+    #   - key: AWS_STORAGE_BUCKET_NAME
+    #     value: "nombre-del-bucket"
+    #   - key: AWS_ACCESS_KEY_ID
+    #     sync: false
+    #   - key: AWS_SECRET_ACCESS_KEY
+    #     sync: false
+    #   - key: AWS_S3_REGION_NAME
+    #     value: "auto"
+    #   - key: AWS_S3_ENDPOINT_URL
+    #     value: "https://<account>.r2.cloudflarestorage.com"
+    #
+    # Alternativa en planes pagos: disco persistente y descomentá estas líneas:
     #
     # disk:
     #   name: media

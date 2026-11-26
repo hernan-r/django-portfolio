@@ -1,6 +1,7 @@
 from datetime import date
+from unittest.mock import patch
 
-from django.test import TestCase
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from .forms import ContactForm
@@ -307,3 +308,45 @@ class ContactViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(ContactMessage.objects.count(), 1)
         self.assertContains(response, "Esperá unos segundos")
+
+    def test_ip_rate_limit_blocks_a_new_session(self):
+        self.client.post(self.url, self.data)
+
+        other_client = Client()
+        response = other_client.post(
+            self.url,
+            {
+                **self.data,
+                "email": "otra-persona@example.com",
+                "message": "Un mensaje distinto enviado desde otra sesión.",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Esperá unos segundos")
+        self.assertEqual(ContactMessage.objects.count(), 1)
+
+    def test_email_rate_limit_blocks_a_different_ip(self):
+        self.client.post(self.url, self.data)
+
+        other_client = Client(REMOTE_ADDR="10.0.0.5")
+        response = other_client.post(
+            self.url,
+            {**self.data, "message": "Un mensaje distinto enviado desde otra IP."},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Esperá unos segundos")
+        self.assertEqual(ContactMessage.objects.count(), 1)
+
+    @override_settings(CONTACT_NOTIFICATION_EMAIL="destinatario@example.com")
+    def test_notification_failure_is_logged(self):
+        with (
+            patch("core.views.EmailMessage.send", side_effect=Exception("SMTP caído")),
+            self.assertLogs("core.views", level="ERROR") as logs,
+        ):
+            response = self.client.post(self.url, self.data)
+
+        self.assertRedirects(response, f"{self.url}#formulario")
+        self.assertEqual(ContactMessage.objects.count(), 1)
+        self.assertIn("No se pudo enviar la notificación", "".join(logs.output))

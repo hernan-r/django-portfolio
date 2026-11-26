@@ -10,6 +10,9 @@ from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
 
+from config.storage import default_storage_config
+from config.validation import validate_production_config
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Carga .env si existe (útil para desarrollo local).
@@ -52,7 +55,7 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", True)
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = int(os.getenv("DJANGO_SECURE_HSTS_SECONDS", "3600"))
+    SECURE_HSTS_SECONDS = int(os.getenv("DJANGO_SECURE_HSTS_SECONDS", "31536000"))
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = False
 
@@ -165,7 +168,7 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = Path(os.getenv("DJANGO_MEDIA_ROOT") or BASE_DIR / "media")
 
 STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "default": default_storage_config(),
     "staticfiles": {
         "BACKEND": (
             "django.contrib.staticfiles.storage.StaticFilesStorage"
@@ -206,3 +209,13 @@ MESSAGE_TAGS = {
     message_constants.WARNING: "warning",
     message_constants.ERROR: "error",
 }
+
+# Fail-fast: nunca arrancar en producción con la clave de desarrollo, hosts
+# locales o notificaciones configuradas pero imposibles de enviar.
+validate_production_config(
+    os.environ,
+    debug=DEBUG,
+    secret_key=SECRET_KEY,
+    allowed_hosts=ALLOWED_HOSTS,
+    email_backend=EMAIL_BACKEND,
+)
