@@ -1,5 +1,7 @@
 import ipaddress
+import logging
 import time
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
@@ -7,6 +9,7 @@ from django.core.mail import EmailMessage
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_GET
 
 from .forms import ContactForm
@@ -29,7 +32,14 @@ SKILL_CATEGORY_ORDER = [
     Skill.Category.FRONTEND,
 ]
 
+logger = logging.getLogger(__name__)
+
 CONTACT_COOLDOWN = 30  # segundos entre envíos por sesión
+CONTACT_IP_WINDOW = 60  # segundos entre envíos desde una misma IP
+CONTACT_EMAIL_WINDOW = 300  # segundos entre envíos con un mismo email
+RATE_LIMIT_MESSAGE = (
+    "Recibimos tu mensaje hace un momento. Esperá unos segundos antes de enviar otro."
+)
 
 
 def _skills_by_category():
@@ -182,22 +192,22 @@ def contact(request):
 
     if request.method == "POST":
         last_sent = request.session.get("contact_last_sent", 0)
-        if time.time() - last_sent < CONTACT_COOLDOWN:
-            form.add_error(
-                None,
-                "Recibimos tu mensaje hace un momento. Esperá unos segundos antes de enviar otro.",
-            )
+        if time.time() - last_sent < CONTACT_COOLDOWN or _is_ip_limited(request):
+            form.add_error(None, RATE_LIMIT_MESSAGE)
         elif form.is_valid():
-            message = form.save(commit=False)
-            message.ip_address = _client_ip(request)
-            message.save()
-            request.session["contact_last_sent"] = time.time()
-            _notify_contact(message)
-            messages.success(
-                request,
-                "¡Mensaje enviado! Gracias por escribirme, te voy a responder a la brevedad.",
-            )
-            return redirect(f"{reverse('contact')}#formulario")
+            if _is_email_limited(form.cleaned_data["email"]):
+                form.add_error(None, RATE_LIMIT_MESSAGE)
+            else:
+                message = form.save(commit=False)
+                message.ip_address = _client_ip(request)
+                message.save()
+                request.session["contact_last_sent"] = time.time()
+                _notify_contact(message)
+                messages.success(
+                    request,
+                    "¡Mensaje enviado! Gracias por escribirme, te voy a responder a la brevedad.",
+                )
+                return redirect(f"{reverse('contact')}#formulario")
 
     context = {
         "form": form,
@@ -217,6 +227,23 @@ def download_cv(request):
     )
     response["Cache-Control"] = "no-store"
     return response
+
+
+def _is_ip_limited(request) -> bool:
+    """Bloquea reenvíos aunque el visitante cambie de sesión."""
+    ip = _client_ip(request)
+    if not ip:
+        return False
+    since = timezone.now() - timedelta(seconds=CONTACT_IP_WINDOW)
+    return ContactMessage.objects.filter(ip_address=ip, created_at__gte=since).exists()
+
+
+def _is_email_limited(email: str) -> bool:
+    """Bloquea reenvíos aunque el visitante cambie de IP."""
+    since = timezone.now() - timedelta(seconds=CONTACT_EMAIL_WINDOW)
+    return ContactMessage.objects.filter(
+        email__iexact=email.strip(), created_at__gte=since
+    ).exists()
 
 
 def _client_ip(request) -> str | None:
@@ -252,7 +279,16 @@ def _notify_contact(message: ContactMessage) -> None:
         to=[recipient],
         reply_to=[message.email],
     )
-    email.send(fail_silently=True)
+    try:
+        sent = email.send(fail_silently=False)
+    except Exception:
+        logger.exception("No se pudo enviar la notificación de contacto a %s", recipient)
+        return
+    if not sent:
+        logger.error(
+            "No se pudo enviar la notificación de contacto a %s: el backend no entregó el mensaje",
+            recipient,
+        )
 
 
 def handler404(request, exception):

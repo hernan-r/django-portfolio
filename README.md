@@ -12,7 +12,7 @@ dinámicamente** desde la base de datos.
 <p>
   <img alt="Django" src="https://img.shields.io/badge/Django-5.2-0C4B33?logo=django&logoColor=white">
   <img alt="Python" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-24%20passing-2ea043">
+  <img alt="Tests" src="https://img.shields.io/badge/tests-37%20passing-2ea043">
   <img alt="Licencia" src="https://img.shields.io/badge/licencia-uso%20personal-ef4444">
 </p>
 
@@ -192,7 +192,11 @@ El formulario incluye:
 - Validación de nombre, email y mensaje (mínimo 20 caracteres).
 - Campo honeypot oculto para bots.
 - Límite de un envío cada 30 segundos por sesión.
-- Guardado de IP para trazabilidad básica.
+- Límite adicional de un mensaje por IP cada 60 segundos y por email cada 5
+  minutos. Estos dos sobreviven al cambio de sesión o de IP, respectivamente.
+- Guardado de IP para trazabilidad y para el límite por IP.
+- Si la notificación por email falla, el error queda en los logs; el mensaje
+  igual se guarda en la bandeja del panel.
 
 ---
 
@@ -239,7 +243,9 @@ python manage.py test
 ```
 
 La suite cubre modelos (singleton del perfil, slugs, iniciales), vistas públicas,
-búsqueda/filtros, descarga del PDF, formulario de contacto, honeypot y rate limit.
+búsqueda/filtros, descarga del PDF, formulario de contacto, honeypot, los tres
+límites de envío, el registro de fallos de email y la configuración de storage y
+de producción.
 
 ---
 
@@ -334,14 +340,55 @@ Después:
 | `DATABASE_URL` | Internal Database URL de PostgreSQL |
 | `PYTHON_VERSION` | `3.11.9` |
 
+### Validación al arrancar en producción
+
+Con `DJANGO_DEBUG=False`, el proyecto valida la configuración al cargar y se
+niega a arrancar con un error claro si falta algo de esto:
+
+- `DJANGO_SECRET_KEY`: obligatoria, única y de al menos 32 caracteres (nunca la
+  clave de desarrollo incluida en el código).
+- `DJANGO_ALLOWED_HOSTS`: debe incluir un host público, salvo que Render provea
+  `RENDER_EXTERNAL_HOSTNAME`.
+- Si definís `CONTACT_NOTIFICATION_EMAIL`: `EMAIL_BACKEND` debe ser SMTP y
+  `EMAIL_HOST`, `EMAIL_HOST_USER` y `EMAIL_HOST_PASSWORD` deben estar completos.
+
+HSTS usa 31536000 segundos (un año) por defecto; podés ajustarlo con
+`DJANGO_SECURE_HSTS_SECONDS`. Para revisar el resto de recomendaciones:
+
+```bash
+python manage.py check --deploy
+```
+
 ### Archivos subidos (media)
 
 El sistema de archivos de Render es efímero: las imágenes subidas desde el admin
-se pierden en cada redeploy. Para conservarlas:
+se pierden en cada redeploy. Hay dos formas de conservarlas.
 
-- En planes pagos, agregá un disco persistente en `render.yaml` (hay un ejemplo
-  comentado) y definí `DJANGO_MEDIA_ROOT=/var/data/media`.
-- O usá un storage externo (S3, Cloudinary, etc.).
+**Opción recomendada: storage S3-compatible.** Creá un bucket (AWS S3, Cloudflare
+R2, etc.) con lectura pública y configurá estas variables en Render:
+
+```env
+DJANGO_STORAGE_BACKEND=s3
+AWS_STORAGE_BUCKET_NAME=nombre-del-bucket
+AWS_ACCESS_KEY_ID=tu-access-key
+AWS_SECRET_ACCESS_KEY=tu-secret-key
+AWS_S3_REGION_NAME=auto
+AWS_S3_ENDPOINT_URL=https://<account>.r2.cloudflarestorage.com
+AWS_QUERYSTRING_AUTH=False
+```
+
+`AWS_S3_REGION_NAME` y `AWS_S3_ENDPOINT_URL` son opcionales con AWS S3 (usá la
+región del bucket y omití el endpoint). Para Proveedores S3-compatible, el
+endpoint es obligatorio y conviene declarar también la región. Las URLs
+generadas son públicas por defecto (`AWS_QUERYSTRING_AUTH=False`) y los archivos
+nuevos no sobrescriben a los existentes. Si `DJANGO_STORAGE_BACKEND=s3` está
+activo pero faltan el bucket o las credenciales, el servicio falla al arrancar
+con un error claro, en lugar de perder imágenes silenciosamente.
+
+**Alternativa: disco persistente.** En planes pagos, agregá un disco en
+`render.yaml` (hay un ejemplo comentado) y definí
+`DJANGO_MEDIA_ROOT=/var/data/media`. Sin storage externo ni disco, las imágenes
+se pierden en cada deploy.
 
 ### Dominio propio
 
